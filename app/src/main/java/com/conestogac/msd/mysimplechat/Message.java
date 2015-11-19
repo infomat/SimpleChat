@@ -8,21 +8,29 @@ import com.parse.ParseObject;
  * To save message data at ListView
  * Need to register before init
  */
-@ParseClassName("Message")
+@ParseClassName("ChatMessages")
 public class Message extends ParseObject {
     public String getUserId() {
-        return getString("userId");
+        return getString("Id");
     }
 
     public String getBody() {
-        return getString("body");
+        return getString("MessageText");
+    }
+
+    public Boolean getIsPrivate(){
+        return getBoolean(("Private"));
     }
 
     public void setUserId(String userId) {
-        put("userId", userId);
+        put("Id", userId);
     }
 
     public void setBody(String body) {
-        put("body", body);
+        put("MessageText", body);
+    }
+
+    public void setPrivate(Boolean isPrivate) {
+        put("Private", isPrivate);
     }
 }

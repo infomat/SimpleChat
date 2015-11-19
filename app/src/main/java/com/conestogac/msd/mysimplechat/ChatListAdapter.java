@@ -22,7 +22,7 @@ import java.util.List;
  * Picasso library is used to download image from Gravatar
  */
 public class ChatListAdapter extends ArrayAdapter<Message> {
-    private String mUserId;
+    public String mUserId;
 
     public ChatListAdapter(Context context, String userId, List<Message> messages) {
         super(context, 0, messages);
@@ -42,9 +42,10 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
         }
         final Message message = (Message)getItem(position);
         final ViewHolder holder = (ViewHolder)convertView.getTag();
-        final boolean isMe = message.getUserId().equals(mUserId);
+        boolean isMe;
         // Show-hide image based on the logged-in user.
         // Display the profile image to the right for our user, left for other users.
+        isMe = message.getUserId().equals(mUserId);
         if (isMe) {
             holder.imageRight.setVisibility(View.VISIBLE);
             holder.imageLeft.setVisibility(View.GONE);
@@ -57,6 +58,7 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
         final ImageView profileView = isMe ? holder.imageRight : holder.imageLeft;
         Picasso.with(getContext()).load(getProfileUrl(message.getUserId())).into(profileView);
         holder.body.setText(message.getBody());
+
         return convertView;
     }
 
@@ -74,9 +76,14 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
         return "http://www.gravatar.com/avatar/" + hex + "?d=identicon";
     }
 
+
+
     final class ViewHolder {
-        public ImageView imageLeft;
-        public ImageView imageRight;
+// To simplify problem, Gravatar feature will be relace with display text ID
+//        public ImageView imageLeft;
+//        public ImageView imageRight;
+        public TextView idLeft;
+        public TextView idLeft;
         public TextView body;
     }
 

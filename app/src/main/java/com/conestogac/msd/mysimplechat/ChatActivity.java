@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -38,7 +39,8 @@ public class ChatActivity extends Activity {
 
   private static final String TAG = ChatActivity.class.getName();
   private static String sUserId;
-  public static final String USER_ID_KEY = "userId";
+  private static String sChatroomId;
+  public static final String USER_ID_KEY = "Id";
 
   private EditText etMessage;
   private Button btSend;
@@ -117,6 +119,21 @@ public class ChatActivity extends Activity {
     mAdapter = new ChatListAdapter(ChatActivity.this, sUserId, mMessages);
     lvChat.setAdapter(mAdapter);
 
+    lvChat.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, "Postion: "+position);
+        Log.d(TAG, "UserID: "+mMessages.get(position).getUserId());
+        Log.d(TAG, "Message: "+mMessages.get(position).getBody());
+        GetChatRoomID();
+/*
+        Intent i = new Intent(More.this, NextActvity.class);
+        //If you wanna send any data to nextActicity.class you can use
+        i.putExtra(String key, value.get(position));
+
+        startActivity(i);*/
+      }
+    });
+
     btSend.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -125,6 +142,7 @@ public class ChatActivity extends Activity {
         Message message = new Message();
         message.setUserId(sUserId);
         message.setBody(body);
+        message.setPrivate(false);
         message.saveInBackground(new SaveCallback() {
           @Override
           public void done(ParseException e) {
@@ -197,6 +215,10 @@ public class ChatActivity extends Activity {
       @Override
       public void onClick(DialogInterface dialog, int which) {
         sUserId = input.getText().toString();
+
+        //todo update member variable of array adapter
+        mAdapter.mUserId = sUserId;
+
         savePreferences();
         Toast.makeText(getApplicationContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
       }
@@ -208,6 +230,35 @@ public class ChatActivity extends Activity {
       }
     });
 
+    builder.show();
+  }
+
+  private void GetChatRoomID() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle(R.string.getChatroomId);
+
+    // Set up the input
+    final EditText input = new EditText(this);
+
+    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+    input.setInputType(InputType.TYPE_CLASS_TEXT);
+    builder.setView(input);
+
+    // Set up the buttons
+    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        sChatroomId = input.getText().toString();
+
+        Toast.makeText(getApplicationContext(), getString(R.string.movetoprivate), Toast.LENGTH_SHORT).show();
+      }
+    });
+    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.cancel();
+      }
+    });
     builder.show();
   }
 }
