@@ -20,6 +20,7 @@ import com.parse.ParseUser;
 public class StarterApplication extends Application {
   public static final String YOUR_APPLICATION_ID = "WUXa2xvzApxSNu65oisCysyqWHahMjIVJ1o13TXq";
   public static final String YOUR_CLIENT_KEY = "kOmHrZyQkVfFULimAt3NNCUc431ySZGofYVAMyQa";
+
   @Override
   public void onCreate() {
     super.onCreate();

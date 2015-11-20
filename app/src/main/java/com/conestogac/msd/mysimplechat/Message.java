@@ -22,6 +22,10 @@ public class Message extends ParseObject {
         return getBoolean(("Private"));
     }
 
+    public String getToId(){
+        return getString(("To"));
+    }
+
     public void setUserId(String userId) {
         put("Id", userId);
     }
@@ -32,5 +36,9 @@ public class Message extends ParseObject {
 
     public void setPrivate(Boolean isPrivate) {
         put("Private", isPrivate);
+    }
+
+    public void setToId(String toUserId) {
+        put("To", toUserId);
     }
 }

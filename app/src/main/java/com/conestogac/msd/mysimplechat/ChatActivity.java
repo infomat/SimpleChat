@@ -11,6 +11,7 @@ package com.conestogac.msd.mysimplechat;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,10 +38,12 @@ import java.util.List;
 public class ChatActivity extends Activity {
   public static final String PREFS_NAME = "msd.conestogac.mysimplechat.MyPrefsFile";
 
-  private static final String TAG = ChatActivity.class.getName();
+  private static final String TAG = "ChatActivity";
   private static String sUserId;
-  private static String sChatroomId;
-  public static final String USER_ID_KEY = "Id";
+  private static String sPrivateToUserId;
+  private static final String USER_ID_KEY = "Id";
+  private static final String TO_KEY = "To";
+  private static final String PRIVATE_KEY = "Private";
 
   private EditText etMessage;
   private Button btSend;
@@ -49,7 +52,7 @@ public class ChatActivity extends Activity {
   private ChatListAdapter mAdapter;
   // Keep track of initial load to scroll to the bottom of the ListView
   private boolean mFirstLoad;
-  private static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
+  private static final int MAX_CHAT_MESSAGES_TO_SHOW = 200;
 
   // Create a handler which can run code periodically
   private Handler handler = new Handler();
@@ -123,14 +126,11 @@ public class ChatActivity extends Activity {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, "Postion: "+position);
         Log.d(TAG, "UserID: "+mMessages.get(position).getUserId());
-        Log.d(TAG, "Message: "+mMessages.get(position).getBody());
-        GetChatRoomID();
-/*
-        Intent i = new Intent(More.this, NextActvity.class);
-        //If you wanna send any data to nextActicity.class you can use
-        i.putExtra(String key, value.get(position));
-
-        startActivity(i);*/
+        Log.d(TAG, "Message: " + mMessages.get(position).getBody());
+        if (mMessages.get(position).getUserId() != null && !mMessages.get(position).getUserId().equals(sUserId)) {
+          sPrivateToUserId = mMessages.get(position).getUserId();
+          gotoPrivateMode();
+        }
       }
     });
 
@@ -158,9 +158,7 @@ public class ChatActivity extends Activity {
   private void receiveMessage() {
     // Construct query to execute
     ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
-    //Todo
-    //query.whereContains(USER_ID_KEY, "Changho");
-
+    query.whereEqualTo(PRIVATE_KEY, false);
     // Configure limit and sort order
     query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
     query.orderByAscending("createdAt");
@@ -233,32 +231,25 @@ public class ChatActivity extends Activity {
     builder.show();
   }
 
-  private void GetChatRoomID() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle(R.string.getChatroomId);
+  private void gotoPrivateMode() {
+    AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+    newDialog.setTitle(R.string.titlePrivateMode);
+    newDialog.setMessage(getString(R.string.noticePrivateMode) +" "+sPrivateToUserId +" messages");
+    newDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+      public void onClick(DialogInterface dialog, int which){
+        dialog.dismiss();
 
-    // Set up the input
-    final EditText input = new EditText(this);
-
-    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-    input.setInputType(InputType.TYPE_CLASS_TEXT);
-    builder.setView(input);
-
-    // Set up the buttons
-    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        sChatroomId = input.getText().toString();
-
-        Toast.makeText(getApplicationContext(), getString(R.string.movetoprivate), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), PrivateModeActivity.class);
+        intent.putExtra("UserID", sUserId);
+        intent.putExtra("PrivateToUserId", sPrivateToUserId);
+        startActivity(intent);
       }
     });
-    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-      @Override
+    newDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         dialog.cancel();
       }
     });
-    builder.show();
+    newDialog.show();
   }
 }

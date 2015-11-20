@@ -15,9 +15,12 @@
     <string name="profile_other">Other profile pic</string>
 
     <string name="app_name">My Simple Chat</string>
+    <string name="public_mode">Public Mode</string>
+    <string name="private_mode">Private Mode</string>
 
     <string name="getUserId">Enter User ID</string>
-    <string name="getChatroomId">Enter Chatroom ID</string>
+    <string name="titlePrivateMode">Enter Private Mode</string>
+    <string name="noticePrivateMode">In private mode, you can see only </string>
     <string name="movetoprivate">Now, move to private message mode</string>
     <string name="action_settings">Settings</string>
     <string name="message_hint">Enter Message</string>
@@ -26,5 +29,8 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="changeid">Change User ID</string>
+    <string name="title_activity_private_mode">PrivateModeActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>
