@@ -9,7 +9,8 @@
         android:layout_height="match_parent"
         android:background="#c3ff90"
         android:paddingLeft="@dimen/list_left_margin"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:gravity="center_vertical|left" />
     <TextView
         android:textSize="18sp"
         android:id="@+id/tvBody"
@@ -23,11 +24,4 @@
         android:focusable="false"
         android:focusableInTouchMode="false">
     </TextView>
-    <TextView
-        android:id="@+id/tvProfileRight"
-        android:layout_marginLeft="-64dp"
-        android:paddingLeft="@dimen/list_left_margin"
-        android:layout_width="64dp"
-        android:layout_height="match_parent"
-        android:background="#27baff" />
 </LinearLayout>

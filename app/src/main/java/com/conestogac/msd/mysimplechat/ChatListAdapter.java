@@ -1,14 +1,17 @@
 package com.conestogac.msd.mysimplechat;
 
 import android.content.Context;
-import android.view.Gravity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by CHANGHO on 2015-11-16.
@@ -18,6 +21,7 @@ import java.util.List;
  */
 public class ChatListAdapter extends ArrayAdapter<Message> {
     public String mUserId;
+    Map<String, Integer> colorTable = new HashMap<String, Integer>();
 
     public ChatListAdapter(Context context, String userId, List<Message> messages) {
         super(context, 0, messages);
@@ -30,8 +34,7 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
             convertView = LayoutInflater.from(getContext()).
                     inflate(R.layout.chat_item, parent, false);
             final ViewHolder holder = new ViewHolder();
-            holder.idOther = (TextView)convertView.findViewById(R.id.tvProfileLeft);
-            holder.idMe = (TextView)convertView.findViewById(R.id.tvProfileRight);
+            holder.id = (TextView)convertView.findViewById(R.id.tvProfileLeft);
             holder.body = (TextView)convertView.findViewById(R.id.tvBody);
             convertView.setTag(holder);
         }
@@ -46,16 +49,28 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
             isMe = false;
         }
         if (isMe) {
-            holder.idMe.setVisibility(View.VISIBLE);
-            holder.idOther.setVisibility(View.GONE);
-            holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            holder.id.setTextColor(Color.WHITE);
+            holder.id.setBackgroundResource(R.color.myid);
+            holder.id.setText("ME:\n" + message.getUserId());
         } else {
-            holder.idOther.setVisibility(View.VISIBLE);
-            holder.idMe.setVisibility(View.GONE);
-            holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            if (message.getUserId().equals("")) {
+                holder.id.setTextColor(Color.WHITE);
+                holder.id.setBackgroundResource(R.color.anonymous);
+                holder.id.setText("Anonymous");
+            } else {
+                int colorCode = getColorId(message.getUserId());
+                int  yiq = ((Color.red(colorCode)*299)+(Color.green(colorCode)*587)+(Color.red(colorCode)*114))/1000;
+                //to make text recognizable, set text color according to background color contrast
+                if (yiq >= 128) {
+                    holder.id.setTextColor(Color.BLACK);
+                } else {
+                    holder.id.setTextColor(Color.WHITE);
+                }
+                holder.id.setBackgroundColor(colorCode);
+                holder.id.setText(message.getUserId());
+            }
         }
-        final TextView profileView = isMe ? holder.idMe : holder.idOther;
-        profileView.setText(message.getUserId());
+
         holder.body.setText(message.getBody());
         holder.body.setSelected(true);
         holder.body.requestFocus();
@@ -64,9 +79,24 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
 
 
     final class ViewHolder {
-        public TextView idOther;
-        public TextView idMe;
+        public TextView id;
         public TextView body;
     }
+
+    private int getColorId(String userId){
+        if (!colorTable.containsKey(userId))
+            colorTable.put(userId,generateRandomColor());
+        return colorTable.get(userId);
+    }
+
+    private int generateRandomColor(){
+        Random rand = new Random();
+
+        int r = rand.nextInt(255);
+        int g = rand.nextInt(255);
+        int b = rand.nextInt(255);
+        return Color.rgb(r, g, b);
+    }
+
 
 }
