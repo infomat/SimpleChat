@@ -48,7 +48,7 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
         if (isMe) {
             holder.idMe.setVisibility(View.VISIBLE);
             holder.idOther.setVisibility(View.GONE);
-            holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         } else {
             holder.idOther.setVisibility(View.VISIBLE);
             holder.idMe.setVisibility(View.GONE);
@@ -57,7 +57,8 @@ public class ChatListAdapter extends ArrayAdapter<Message> {
         final TextView profileView = isMe ? holder.idMe : holder.idOther;
         profileView.setText(message.getUserId());
         holder.body.setText(message.getBody());
-
+        holder.body.setSelected(true);
+        holder.body.requestFocus();
         return convertView;
     }
 

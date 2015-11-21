@@ -248,8 +248,8 @@ public class ChatActivity extends Activity {
     AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
     newDialog.setTitle(R.string.titlePrivateMode);
     newDialog.setMessage(getString(R.string.noticePrivateMode) +" "+sPrivateToUserId +" messages");
-    newDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
-      public void onClick(DialogInterface dialog, int which){
+    newDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int which) {
         dialog.dismiss();
 
         Intent intent = new Intent(getApplicationContext(), PrivateModeActivity.class);
