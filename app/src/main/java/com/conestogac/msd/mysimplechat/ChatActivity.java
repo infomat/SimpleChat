@@ -44,7 +44,7 @@ public class ChatActivity extends Activity {
   private static final String USER_ID_KEY = "Id";
   private static final String TO_KEY = "To";
   private static final String PRIVATE_KEY = "Private";
-
+  private boolean isRefreshed;
   private EditText etMessage;
   private Button btSend;
   private ListView lvChat;
@@ -52,7 +52,7 @@ public class ChatActivity extends Activity {
   private ChatListAdapter mAdapter;
   // Keep track of initial load to scroll to the bottom of the ListView
   private boolean mFirstLoad;
-  private static final int MAX_CHAT_MESSAGES_TO_SHOW = 200;
+  private static final int MAX_CHAT_MESSAGES_TO_SHOW = 500;
 
   // Create a handler which can run code periodically
   private Handler handler = new Handler();
@@ -73,15 +73,20 @@ public class ChatActivity extends Activity {
     } else { // If not logged in, login as a new anonymous user
       login();
     }
+      isRefreshed = true;
       // Run the runnable object defined every 100ms
-      handler.postDelayed(runnable, 100);
+      handler.postDelayed(runnable, 1000);
+
   }
   // Defines a runnable which is run every 100ms
   private Runnable runnable = new Runnable() {
     @Override
     public void run() {
-      refreshMessages();
-      handler.postDelayed(this, 2000);
+      if (isRefreshed == true) {
+        isRefreshed = false;
+        refreshMessages();
+      }
+      handler.postDelayed(this, 1000);
     }
   };
 
@@ -156,25 +161,33 @@ public class ChatActivity extends Activity {
 
   // Query messages from Parse so we can load them into the chat adapter
   private void receiveMessage() {
+    int rowCount;
     // Construct query to execute
     ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
     query.whereEqualTo(PRIVATE_KEY, false);
     // Configure limit and sort order
     query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
-    query.orderByAscending("createdAt");
+    query.orderByDescending("createdAt");
+
     // Execute query to fetch all messages from Parse asynchronously
     // This is equivalent to a SELECT query with SQL
     query.findInBackground(new FindCallback<Message>() {
       public void done(List<Message> messages, ParseException e) {
         if (e == null) {
           mMessages.clear();
-          mMessages.addAll(messages);
+
+          // Iterate in reverse.
+          for (int index = messages.size()-1; index >=0; index--){
+            mMessages.add(messages.get(index));
+          }
+
           mAdapter.notifyDataSetChanged(); // update adapter
           // Scroll to the bottom of the list on initial load
           if (mFirstLoad) {
             lvChat.setSelection(mAdapter.getCount() - 1);
             mFirstLoad = false;
           }
+          isRefreshed = true;
         } else {
           Log.d("message", "Error: " + e.getMessage());
         }

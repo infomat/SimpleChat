@@ -17,9 +17,7 @@
         android:lines="3"
         android:layout_marginRight="64dp"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:ellipsize="marquee"
-        android:singleLine="true">
+        android:layout_height="64dp">
     </TextView>
     <TextView
         android:id="@+id/tvProfileRight"
